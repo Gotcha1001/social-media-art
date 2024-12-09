@@ -1,18 +1,23 @@
-"use client"; // Ensures this component runs on the client side
+"use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { ClerkLoaded, useUser, SignedIn, SignedOut } from "@clerk/nextjs";
+import NavLink from "@/components/NavLink"; // Adjust path as necessary
+import { SelectedPage } from "@/lib/types";
+import SearchBar from "./SearchBar";
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-
-  // Use the `useUser` hook to get the current user (runs only on client-side)
+  const [selectedPage, setSelectedPage] = useState<SelectedPage | undefined>();
   const { user } = useUser();
 
-  // Function to close the menu
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  const handleSearchSubmit = () => {
+    // Close the menu when a search is performed
+    closeMenu();
   };
 
   return (
@@ -40,41 +45,57 @@ const MobileMenu = () => {
 
       {isOpen && (
         <div className="absolute left-0 top-24 w-full h-[calc(100vh-96px)] gradient-background2 flex flex-col items-center justify-center gap-8 font-medium text-xl z-10">
-          {/* Home link */}
-          <Link className="text-white" href="/" onClick={closeMenu}>
-            Home
-          </Link>
+          <SearchBar onSearchSubmit={handleSearchSubmit} />
+          <NavLink
+            page="Home"
+            href="/"
+            selectedPage={selectedPage}
+            setSelectedPage={setSelectedPage}
+            onClose={closeMenu} // Pass closeMenu here
+          />
 
           <ClerkLoaded>
             <SignedIn>
-              {/* Profile link when the user is signed in */}
-              <Link
-                className="text-white"
+              <NavLink
+                page="Profile"
                 href={`/profile/${user?.username || ""}`}
-                onClick={closeMenu}
-              >
-                Profile
-              </Link>
+                selectedPage={selectedPage}
+                setSelectedPage={setSelectedPage}
+                onClose={closeMenu} // Pass closeMenu here
+              />
             </SignedIn>
-
             <SignedOut>
-              {/* Login link when the user is not signed in */}
-              <Link className="text-white" href="/sign-in" onClick={closeMenu}>
-                Login
-              </Link>
+              <NavLink
+                page="Sign In"
+                href="/sign-in"
+                selectedPage={selectedPage}
+                setSelectedPage={setSelectedPage}
+                onClose={closeMenu} // Pass closeMenu here
+              />
             </SignedOut>
           </ClerkLoaded>
 
-          {/* Additional links */}
-          <Link className="text-white" href="/" onClick={closeMenu}>
-            Friends
-          </Link>
-          <Link className="text-white" href="/" onClick={closeMenu}>
-            Groups
-          </Link>
-          <Link className="text-white" href="/" onClick={closeMenu}>
-            Stories
-          </Link>
+          <NavLink
+            page="Friends"
+            href="/friends"
+            selectedPage={selectedPage}
+            setSelectedPage={setSelectedPage}
+            onClose={closeMenu} // Pass closeMenu here
+          />
+          <NavLink
+            page="Groups"
+            href="/groups"
+            selectedPage={selectedPage}
+            setSelectedPage={setSelectedPage}
+            onClose={closeMenu} // Pass closeMenu here
+          />
+          <NavLink
+            page="Stories"
+            href="/stories"
+            selectedPage={selectedPage}
+            setSelectedPage={setSelectedPage}
+            onClose={closeMenu} // Pass closeMenu here
+          />
         </div>
       )}
     </div>

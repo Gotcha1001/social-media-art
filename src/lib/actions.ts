@@ -1,9 +1,10 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, getAuth } from "@clerk/nextjs/server";
 import prisma from "./client";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { NextRequest } from "next/server";
 
 export const switchFollow = async (userId: string) => {
   const { userId: currentUserId } = await auth();
@@ -383,4 +384,97 @@ export const deletePost = async (postId: string) => {
     });
     revalidatePath("/");
   } catch (error) {}
+};
+
+interface UserData {
+  id: string;
+  username?: string;
+  name?: string;
+  surname?: string;
+  avatar?: string;
+}
+
+export const createUser = async (userData: UserData) => {
+  if (!userData.id) {
+    throw new Error("User ID is required");
+  }
+
+  try {
+    // Check if a user already exists with the given ID
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userData.id },
+    });
+
+    if (existingUser) {
+      console.log("User already exists:", existingUser);
+      return existingUser; // Optionally return the existing user or handle as needed
+    }
+
+    // Generate a unique username if not provided
+    const username = userData.username || `user_${userData.id.slice(0, 8)}`;
+
+    // Create a new user in the database
+    return await prisma.user.create({
+      data: {
+        id: userData.id,
+        username: username,
+        name: userData.name,
+        surname: userData.surname,
+        avatar: userData.avatar || "/noAvatar.png",
+        cover: "/noCover.png",
+      },
+    });
+  } catch (error) {
+    console.error("Error in createUser:", error);
+    throw new Error("Failed to create user");
+  }
+};
+
+export const getFriends = async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User is not authenticated");
+  }
+
+  try {
+    // Fetch friends where the logged-in user is the follower and the followed user is not blocked
+    const friends = await prisma.follower.findMany({
+      where: {
+        followerId: userId,
+      },
+      include: {
+        following: true, // Include the details of the followed user
+      },
+    });
+
+    // Only return the following user details
+    return friends.map((f) => f.following);
+  } catch (error) {
+    console.error("Failed to fetch friends:", error);
+    throw new Error("Failed to fetch friends");
+  }
+};
+
+export const fetchStories = async () => {
+  const { userId } = await auth();
+
+  // Check if the user is authenticated and handle accordingly
+  if (!userId) {
+    return []; // Return an empty array if the user is not authenticated
+  }
+
+  try {
+    // Fetch all stories from the database
+    const stories = await prisma.story.findMany({
+      include: {
+        user: true, // Include user details if needed
+      },
+    });
+
+    return stories;
+  } catch (error) {
+    console.error("Failed to fetch stories:", error);
+    throw new Error("Failed to fetch stories");
+  }
 };

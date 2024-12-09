@@ -6,6 +6,7 @@ import { useState } from "react";
 import { CldUploadWidget } from "next-cloudinary";
 import AddPostButton from "./AddPostButton";
 import { addPost } from "@/lib/actions";
+import { PhotoIcon } from "@heroicons/react/20/solid";
 
 const AddPosts = () => {
   const { user, isLoaded } = useUser();
@@ -37,24 +38,16 @@ const AddPosts = () => {
           className="flex gap-4"
         >
           <textarea
-            placeholder="Whats on your mind?"
-            className="bg-slate-100 rounded-lg flex-1 p-2"
+            placeholder="What's on your mind?"
+            className=" rounded-lg flex-1 p-2 resize-none border hover:border-indigo-500"
             name="desc"
             onChange={(e) => setDesc(e.target.value)}
           ></textarea>
-          <div className="">
-            <MotionWrapper>
-              <Image
-                src="/emoji.png"
-                alt="icon"
-                height={20}
-                width={20}
-                className="w-5 h-5 cursor-pointer self-end"
-              />
-            </MotionWrapper>
+          <div className="flex flex-col justify-end">
             <AddPostButton />
           </div>
         </form>
+
         {/* POST OPTIONS */}
         <div className="flex items-center gap-4 mt-4 text-gray-400 flex-wrap">
           <CldUploadWidget
@@ -72,13 +65,17 @@ const AddPosts = () => {
                   className="flex items-center gap-2 cursor-pointer"
                   onClick={() => open()}
                 >
-                  <Image src="/addImage.png" alt="" height={20} width={20} />
+                  <PhotoIcon
+                    className="text-indigo-600"
+                    height={20}
+                    width={20}
+                  />
                   Photo
                 </div>
               </MotionWrapper>
             )}
           </CldUploadWidget>
-
+          {/* 
           <MotionWrapper>
             <div className="flex items-center gap-2 cursor-pointer">
               <Image src="/addVideo.png" alt="" height={20} width={20} />
@@ -100,7 +97,7 @@ const AddPosts = () => {
               <Image src="/addEvent.png" alt="" height={20} width={20} />
               Event
             </div>
-          </MotionWrapper>
+          </MotionWrapper> */}
         </div>
       </div>
     </div>

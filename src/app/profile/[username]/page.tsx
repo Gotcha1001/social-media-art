@@ -67,7 +67,9 @@ const ProfilePage = async ({ params }: { params: { username: string } }) => {
               />
             </div>
             <h1 className="mt-20 mb-4 text-2xl text-white font-medium">
-              {user.name && user.surname ? user.name + " " + user.surname : user.username}
+              {user.name && user.surname
+                ? user.name + " " + user.surname
+                : user.username}
             </h1>
             <div className="flex items-center justify-center gap-12 mb-4 text-indigo-500">
               <div className="flex flex-col items-center">

@@ -7,6 +7,7 @@ import PostInteraction from "./PostInteraction";
 import { Suspense } from "react";
 import PostInfo from "./PostInfo";
 import { auth } from "@clerk/nextjs/server";
+import MotionImageAll from "../MotionImageAll";
 
 type FeedPostType = PostType & { user: User } & {
   likes: [{ userId: string }];
@@ -40,16 +41,17 @@ const Post = async ({ post }: { post: FeedPostType }) => {
       </div>
       {/* DESCRIPTION DIV */}
       <div className="flex flex-col gap-4">
-        <div className="w-full min-h-96 relative">
+        <div className="w-full min-h-96 flex justify-center items-center">
+          {" "}
+          {/* Centering container */}
           {post.img && (
-            <div className="w-full min-h-96 relative">
-              <Image
-                src={post.img}
-                alt="ICON"
-                fill
-                className="object-cover rounded-md"
-              />
-            </div>
+            <MotionImageAll
+              src={post.img}
+              alt="Post Image"
+              width={600} // Adjust width as needed
+              height={400} // Adjust height as needed
+              className="w-full min-h-96"
+            />
           )}
         </div>
         <p>{post.desc}</p>

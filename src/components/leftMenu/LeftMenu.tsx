@@ -5,8 +5,6 @@ import ProfileCard from "./ProfileCard";
 import MotionWrapper from "../MotionWrapper";
 import Ad from "../Ad";
 
-
-
 const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
   return (
     <div className="flex flex-col gap-6 p-2">
@@ -23,7 +21,7 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
           <span>My Posts</span>
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
-        {/* Next Link */}
+
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -34,7 +32,7 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
           <span>Activity</span>
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
-        {/* Next Link */}
+
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -46,7 +44,6 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
 
-        {/* Next Link */}
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -58,7 +55,6 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
 
-        {/* Next Link */}
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -70,7 +66,6 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
 
-        {/* Next Link */}
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -82,7 +77,6 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
 
-        {/* Next Link */}
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -94,7 +88,6 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
 
-        {/* Next Link */}
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -106,7 +99,6 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
 
-        {/* Next Link */}
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -118,7 +110,6 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
 
-        {/* Next Link */}
         <Link
           href="/"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-indigo-600 hover:text-white"
@@ -128,8 +119,8 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
           </MotionWrapper>
           <span>Settings</span>
         </Link>
-    
-      </div> <Ad size="sm" />
+      </div>{" "}
+      <Ad size="sm" />
     </div>
   );
 };

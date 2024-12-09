@@ -1,6 +1,9 @@
-"use client"; // Ensure this file runs client-side
+"use client";
 
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import NavLink from "./NavLink";
+import { SelectedPage } from "@/lib/types";
 import MobileMenu from "./MobileMenu";
 import {
   Home,
@@ -19,120 +22,174 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
+import SearchBar from "./SearchBar";
 
 const Navbar = () => {
-  // Use the `useUser` hook to get the current user (runs only client-side)
-  const { user } = useUser();
+  const pathname = usePathname();
+  const { user, isLoaded, isSignedIn } = useUser();
+
+  // More robust error handling for user creation
+  useEffect(() => {
+    const createUser = async () => {
+      if (!isLoaded) return;
+
+      if (isSignedIn && user) {
+        try {
+          console.log("Attempting to create user. User object:", user);
+
+          const username =
+            user.username ||
+            user.fullName?.replace(/\s+/g, "_").toLowerCase() ||
+            `user_${user.id.slice(0, 8)}`;
+
+          const response = await fetch("/api/create-user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              avatar: user.imageUrl,
+              clerkUserId: user.id, // Include Clerk user ID for reference
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Failed to create user");
+          }
+
+          console.log("User creation request sent successfully.");
+        } catch (error) {
+          console.error("Failed to create user:", error);
+        }
+      }
+    };
+
+    createUser();
+  }, [isLoaded, isSignedIn, user]);
+
+  // State to manage the currently selected page
+  const [selectedPage, setSelectedPage] = useState<SelectedPage | undefined>(
+    () => {
+      const initialPage = pathname.split("/")[1];
+      return initialPage ? (initialPage as SelectedPage) : undefined;
+    }
+  );
+
+  // Defensive rendering to handle different loading states
+  if (!isLoaded) {
+    return (
+      <div className="h-24 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-600 border-solid"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-24 flex items-center justify-between mx-3">
-      {/* LEFT */}
+      {/* LEFT: Logo */}
       <div className="md:hidden lg:block w-[20%]">
-        <Link href="/" className="font-bold text-xl text-indigo-900 p-2">
-          BandSocial
-        </Link>
+        <NavLink
+          page="BandSocial"
+          href="/"
+          selectedPage={selectedPage}
+          setSelectedPage={setSelectedPage}
+        />
       </div>
 
-      {/* CENTER */}
+      {/* CENTER: Navigation Links and Search */}
       <div className="hidden md:flex w-[50%] text-sm items-center justify-between">
-        {/* LINKS */}
+        {/* Navigation Links */}
         <div className="flex gap-6 text-slate-400">
-          <Link
+          <NavLink
+            page="HomePage"
             href="/"
-            className="flex items-center gap-2 hover:text-indigo-600"
-          >
-            <Home className="w-4 h-4" />
-            <span>HomePage</span>
-          </Link>
-
-          {/* New Profile Link */}
-          <ClerkLoaded>
-            <Link
-              href={`/profile/${user?.username || ""}`}
-              className="flex items-center gap-2 hover:text-indigo-600"
-            >
-              <Users className="w-4 h-4" />
-              <span>Profile</span>
-            </Link>
-          </ClerkLoaded>
-
-          <Link
-            href="/"
-            className="flex items-center gap-2 hover:text-indigo-600"
-          >
-            <Users className="w-4 h-4" />
-            <span>Friends</span>
-          </Link>
-          <Link
-            href="/"
-            className="flex items-center gap-2 hover:text-indigo-600"
-          >
-            <Book className="w-4 h-4" />
-            <span>Stories</span>
-          </Link>
-        </div>
-
-        {/* Search bar */}
-        <div className="hidden xl:flex p-2 bg-slate-100 items-center rounded-xl ">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="bg-transparent outline-none"
+            selectedPage={selectedPage}
+            setSelectedPage={setSelectedPage}
           />
-          <Search width={14} height={14} />
+          {isSignedIn && user && (
+            <NavLink
+              page="Profile"
+              href={`/profile/${user.username || ""}`}
+              selectedPage={selectedPage}
+              setSelectedPage={setSelectedPage}
+            />
+          )}
+          <NavLink
+            page="Friends"
+            href="/friends"
+            selectedPage={selectedPage}
+            setSelectedPage={setSelectedPage}
+          />
+          <NavLink
+            page="Stories"
+            href="/stories"
+            selectedPage={selectedPage}
+            setSelectedPage={setSelectedPage}
+          />
         </div>
+
+        {/* Search Bar */}
+        <SearchBar />
       </div>
 
-      {/* RIGHT */}
+      {/* RIGHT: Login/Logout and User Options */}
       <div className="w-[30%] flex items-center gap-4 xl:gap-8 justify-end">
-        <ClerkLoading>
-          <div className="flex justify-center items-center min-h-screen">
+        {!isLoaded ? (
+          <div className="flex justify-center items-center">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-600 border-solid"></div>
           </div>
-        </ClerkLoading>
-
-        <ClerkLoaded>
-          <SignedIn>
-            <div className="flex items-center gap-4 p-2">
-              {/* User icons */}
-              <div className="cursor-pointer">
-                <Users
-                  className="w-6 h-6 text-slate-400 hover:text-indigo-600"
-                  aria-label="Friends"
-                />
-              </div>
-              <div>
-                <Bell
-                  className="w-6 h-6 text-slate-400 hover:text-indigo-600"
-                  aria-label="Notifications"
-                />
-              </div>
-              <div>
-                <MessageCircle
-                  className="w-6 h-6 text-slate-400 hover:text-indigo-600"
-                  aria-label="Messages"
-                />
-              </div>
-              {/* User button */}
-              <UserButton />
+        ) : isSignedIn ? (
+          <div className="flex items-center gap-4 p-2">
+            {/* Icons for friends, notifications, and messages */}
+            <NavLink
+              page="Friends"
+              href="/friends"
+              selectedPage={selectedPage}
+              setSelectedPage={setSelectedPage}
+            />
+            <div
+              className={`cursor-pointer ${
+                pathname === "/notifications"
+                  ? "text-indigo-600"
+                  : "text-slate-400 hover:text-indigo-600"
+              }`}
+            >
+              <Bell className="w-6 h-6" aria-label="Notifications" />
             </div>
-          </SignedIn>
-
-          <SignedOut>
-            <div className="flex items-center gap-2 group">
-              <LogIn
-                className="w-5 h-5 text-teal-600 group-hover:text-indigo-900 transition-colors duration-200"
-                aria-label="Login"
-              />
-              <Link
-                className="text-teal-600 group-hover:text-indigo-900 transition-colors duration-200 text-sm"
-                href="/sign-in"
-              >
-                Login/Register
-              </Link>
+            <div
+              className={`cursor-pointer ${
+                pathname === "/messages"
+                  ? "text-indigo-600"
+                  : "text-slate-400 hover:text-indigo-600"
+              }`}
+            >
+              <MessageCircle className="w-6 h-6" aria-label="Messages" />
             </div>
-          </SignedOut>
-        </ClerkLoaded>
+            {/* User Button */}
+            <UserButton />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 group">
+            <LogIn
+              className={`w-5 h-5 ${
+                pathname === "/sign-in"
+                  ? "text-indigo-900"
+                  : "text-teal-600 group-hover:text-indigo-900 transition-colors duration-200"
+              }`}
+              aria-label="Login"
+            />
+            <NavLink
+              page="Sign-In"
+              href="/sign-in"
+              selectedPage={selectedPage}
+              setSelectedPage={setSelectedPage}
+            />
+          </div>
+        )}
 
         <MobileMenu />
       </div>
