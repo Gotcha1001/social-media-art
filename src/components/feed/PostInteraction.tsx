@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import MotionWrapper from "../MotionWrapper";
 import { useAuth } from "@clerk/nextjs";
@@ -25,8 +25,8 @@ const PostInteraction = ({
 
   const [commentCount, setCommentCount] = useState(commentNumber);
 
-  // Fetch likes function
-  const fetchLikes = async () => {
+  // Memoized function to fetch likes
+  const fetchLikes = useCallback(async () => {
     try {
       const likes = await getPostLikes(String(postId));
       setLikeState({
@@ -36,23 +36,23 @@ const PostInteraction = ({
     } catch (error) {
       console.error("Error fetching likes:", error);
     }
-  };
+  }, [postId, userId]);
 
-  // Fetch comment count function
-  const fetchCommentCount = async () => {
+  // Memoized function to fetch comment count
+  const fetchCommentCount = useCallback(async () => {
     try {
       const count = await getCommentCount(String(postId));
       setCommentCount(count);
     } catch (error) {
       console.error("Error fetching comment count:", error);
     }
-  };
+  }, [postId]);
 
   // Call functions to refresh data on component mount
   useEffect(() => {
     fetchLikes();
     fetchCommentCount();
-  }, [postId]);
+  }, [fetchLikes, fetchCommentCount]);
 
   // Optimistic UI for likes
   const [optimisticLike, switchOptimisticLike] = useOptimistic(
