@@ -8,7 +8,7 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Band and Artist Social Media App",
+  title: "Social Cloud",
   description: "Social media app built with Next.js",
 };
 
