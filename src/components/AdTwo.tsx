@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import MotionWrapperDelay from "./MotionWrapperDelay";
 
-const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
+const AdTwo = ({ size }: { size: "sm" | "md" | "lg" }) => {
   return (
     <MotionWrapperDelay
       initial="hidden"
@@ -16,7 +16,7 @@ const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
         visible: { opacity: 1, x: 0 },
       }}
     >
-      <div className="p-9 bg-white rounded-lg shadow-md text-sm">
+      <div className="p-9 gradient-background1 rounded-lg shadow-md text-sm">
         {/* TOP */}
         <div className="flex items-center justify-between text-gray-500 font-medium">
           <span>Sponsored Ads</span>
@@ -43,8 +43,8 @@ const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
               className="relative w-full h-full flex justify-center items-center"
             >
               <Image
-                src="https://images.pexels.com/photos/2552131/pexels-photo-2552131.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt="more"
+                src="https://images.pexels.com/photos/3693901/pexels-photo-3693901.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="ad-image"
                 fill
                 className="rounded-lg object-cover"
               />
@@ -63,21 +63,23 @@ const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
               className="flex justify-center items-center"
             >
               <Image
-                src="https://images.pexels.com/photos/2552131/pexels-photo-2552131.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt="more"
+                src="https://images.pexels.com/photos/3693901/pexels-photo-3693901.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="brand-logo"
                 height={24}
                 width={24}
                 className="rounded-full w-6 h-6 object-cover"
               />
             </motion.div>
-            <span className="text-indigo-600 font-medium">BigChef Lounge</span>
+            <span className="text-indigo-600 font-medium">
+              Community Boosters
+            </span>
           </div>
           <p className={size === "sm" ? "text-xs" : "text-sm"}>
             {size === "sm"
-              ? "We are sponsoring multiple businesses and corporations with funding for the children."
+              ? "Join us in spreading joy and support for local initiatives."
               : size === "md"
-              ? "We are sponsoring multiple businesses and corporations with funding for children and the elderly to help with festive season celebrations and boost the community's cheer."
-              : "We are sponsoring multiple businesses and corporations with funding for children and the elderly to help with festive season celebrations and boost community spirit. Let's share our goodness and help those in need while celebrating our common humanity."}
+              ? "We partner with organizations to support children and families, bringing happiness to the community during the holiday season and beyond."
+              : "Partnering with various groups to empower and uplift local communities by providing essential support and spreading holiday cheer. Join us in making a difference and bringing hope to those in need."}
           </p>
 
           <button className="bg-indigo-600 w-full text-white p-2 text-xs rounded-lg hover:bg-purple-900">
@@ -89,4 +91,4 @@ const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
   );
 };
 
-export default Ad;
+export default AdTwo;

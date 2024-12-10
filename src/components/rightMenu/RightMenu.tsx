@@ -7,6 +7,11 @@ import { Suspense } from "react";
 import UserInfoCard from "./UserInfoCard";
 import UserMediaCard from "./UserMediaCard";
 import Ad from "../Ad";
+import AdTwo from "../AdTwo";
+import AdThree from "../AdThree";
+import AdFour from "../AdFour";
+import AdFive from "../AdFive";
+import AdSix from "../AdSix";
 
 const RightMenu = ({ user }: { user?: User }) => {
   return (
@@ -24,6 +29,11 @@ const RightMenu = ({ user }: { user?: User }) => {
       <FriendRequests />
       <Birthdays />
       <Ad size="md" />
+      <AdTwo size="md" />
+      <AdThree size="md" />
+      <AdFour size="md" />
+      <AdFive size="lg" />
+      <AdSix size="sm" />
     </div>
   );
 };

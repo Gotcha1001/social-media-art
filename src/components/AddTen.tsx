@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import MotionWrapperDelay from "./MotionWrapperDelay";
 
-const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
+const AdTen = ({ size }: { size: "sm" | "md" | "lg" }) => {
   return (
     <MotionWrapperDelay
       initial="hidden"
@@ -12,14 +12,14 @@ const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
       viewport={{ once: true, amount: 0.5 }}
       transition={{ duration: 0.5, delay: 0.7 }}
       variants={{
-        hidden: { opacity: 0, x: 100 },
-        visible: { opacity: 1, x: 0 },
+        hidden: { opacity: 0, y: 100 },
+        visible: { opacity: 1, y: 0 },
       }}
     >
-      <div className="p-9 bg-white rounded-lg shadow-md text-sm">
+      <div className="p-9 gradient-background2 rounded-lg shadow-lg text-sm">
         {/* TOP */}
-        <div className="flex items-center justify-between text-gray-500 font-medium">
-          <span>Sponsored Ads</span>
+        <div className="flex items-center justify-between text-gray-200 font-semibold">
+          <span>Adoption Opportunity</span>
           <Image src="/more.png" alt="more" width={16} height={16} />
         </div>
         {/* BOTTOM */}
@@ -43,8 +43,8 @@ const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
               className="relative w-full h-full flex justify-center items-center"
             >
               <Image
-                src="https://images.pexels.com/photos/2552131/pexels-photo-2552131.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt="more"
+                src="https://images.pexels.com/photos/3776204/pexels-photo-3776204.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="adoption"
                 fill
                 className="rounded-lg object-cover"
               />
@@ -63,25 +63,25 @@ const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
               className="flex justify-center items-center"
             >
               <Image
-                src="https://images.pexels.com/photos/2552131/pexels-photo-2552131.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt="more"
+                src="https://images.pexels.com/photos/3776204/pexels-photo-3776204.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="adoption-logo"
                 height={24}
                 width={24}
                 className="rounded-full w-6 h-6 object-cover"
               />
             </motion.div>
-            <span className="text-indigo-600 font-medium">BigChef Lounge</span>
+            <span className="text-blue-600 font-semibold">Adopt a Child</span>
           </div>
-          <p className={size === "sm" ? "text-xs" : "text-sm"}>
+          <p className={`text-white ${size === "sm" ? "text-xs" : "text-sm"}`}>
             {size === "sm"
-              ? "We are sponsoring multiple businesses and corporations with funding for the children."
+              ? "Make a difference—adopt and give a child a loving home."
               : size === "md"
-              ? "We are sponsoring multiple businesses and corporations with funding for children and the elderly to help with festive season celebrations and boost the community's cheer."
-              : "We are sponsoring multiple businesses and corporations with funding for children and the elderly to help with festive season celebrations and boost community spirit. Let's share our goodness and help those in need while celebrating our common humanity."}
+              ? "Join us in providing a bright future for children in need. Open your heart and home through adoption and change a life forever."
+              : "Experience the joy of giving a child the love and support they deserve. Adopting a child is an act of compassion that brings hope, happiness, and a brighter future for children who need it the most. Be their hero and create a bond that lasts a lifetime."}
           </p>
 
-          <button className="bg-indigo-600 w-full text-white p-2 text-xs rounded-lg hover:bg-purple-900">
-            Learn More...
+          <button className="bg-blue-600 w-full text-white p-2 text-xs rounded-lg hover:bg-blue-700 transition">
+            Start Your Adoption Journey
           </button>
         </div>
       </div>
@@ -89,4 +89,4 @@ const Ad = ({ size }: { size: "sm" | "md" | "lg" }) => {
   );
 };
 
-export default Ad;
+export default AdTen;
