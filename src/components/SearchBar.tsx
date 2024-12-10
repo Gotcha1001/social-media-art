@@ -42,14 +42,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearchSubmit }) => {
   }, [pathname]);
 
   return (
-    <div className="flex p-2 bg-slate-100 items-center rounded-xl">
+    <div className="flex p-2 bg-slate-100 items-center rounded-xl ">
       <input
         type="text"
         placeholder="Search for users..."
         value={query}
         onChange={handleSearch}
         onFocus={handleFocus}
-        className="bg-transparent outline-none w-full"
+        className="bg-transparent outline-none lg:w-[400px] md:w-[300px] sm:w-[200px] xl:w-[450]"
       />
     </div>
   );

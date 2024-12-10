@@ -1,5 +1,3 @@
-import Image from "next/image";
-import MotionWrapper from "./MotionWrapper";
 import prisma from "@/lib/client";
 import { auth } from "@clerk/nextjs/server";
 import StoryList from "./StoryList";

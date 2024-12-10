@@ -9,12 +9,21 @@ import { addPost } from "@/lib/actions";
 import { PhotoIcon } from "@heroicons/react/20/solid";
 
 const AddPosts = () => {
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
   const [desc, setDesc] = useState("");
   const [img, setImg] = useState<any>();
 
   if (!isLoaded) {
     return "Loading...";
+  }
+
+  if (!isSignedIn) {
+    // Display a message if not signed in
+    return (
+      <div className="p-4 bg-white shadow-md rounded-lg flex flex-col items-center justify-center text-sm">
+        <p className="text-gray-500">Please sign in to add a post.</p>
+      </div>
+    );
   }
 
   return (
@@ -75,29 +84,6 @@ const AddPosts = () => {
               </MotionWrapper>
             )}
           </CldUploadWidget>
-          {/* 
-          <MotionWrapper>
-            <div className="flex items-center gap-2 cursor-pointer">
-              <Image src="/addVideo.png" alt="" height={20} width={20} />
-              Video
-            </div>
-          </MotionWrapper>
-
-          <MotionWrapper>
-            {" "}
-            <div className="flex items-center gap-2 cursor-pointer">
-              <Image src="/poll.png" alt="" height={20} width={20} />
-              Poll
-            </div>
-          </MotionWrapper>
-
-          <MotionWrapper>
-            {" "}
-            <div className="flex items-center gap-2 cursor-pointer">
-              <Image src="/addEvent.png" alt="" height={20} width={20} />
-              Event
-            </div>
-          </MotionWrapper> */}
         </div>
       </div>
     </div>

@@ -5,8 +5,8 @@ import prisma from "@/lib/client";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import AvatarWithMotion from "@/components/AvatarWithMotion"; // Import the client-side wrapper
-
+import AvatarWithMotion from "@/components/AvatarWithMotion";
+import ProfileHeader from "./ProfileHeader";
 const ProfilePage = async ({ params }: { params: { username: string } }) => {
   const username = params.username;
 
@@ -49,45 +49,18 @@ const ProfilePage = async ({ params }: { params: { username: string } }) => {
       <div className="hidden xl:block w-[20%] gradient-background2 rounded-lg">
         <LeftMenu type="profile" />
       </div>
-      <div className="w-full lg:w-[70%] xl:w-[50%] gradient-background2 p-2 rounded-lg">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col justify-center items-center">
-            <div className="w-full h-64 relative">
-              <Image
-                src={user.cover || "/noCover.png"}
-                fill
-                alt="Cover image"
-                className="object-cover"
-              />
-              <AvatarWithMotion
-                src={user.avatar || "/noAvatar.png"}
-                alt="User avatar"
-                width={128}
-                height={128}
-              />
-            </div>
-            <h1 className="mt-20 mb-4 text-2xl text-white font-medium">
-              {user.name && user.surname
-                ? user.name + " " + user.surname
-                : user.username}
-            </h1>
-            <div className="flex items-center justify-center gap-12 mb-4 text-indigo-500">
-              <div className="flex flex-col items-center">
-                <span className="font-medium">{user._count.posts}</span>
-                <span className="text-sm">Posts</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="font-medium">{user._count.followers}</span>
-                <span className="text-sm">Followers</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="font-medium">{user._count.followings}</span>
-                <span className="text-sm">Following</span>
-              </div>
-            </div>
-          </div>
-          <Feed username={user.username} />
-        </div>
+      <div className="w-full lg:w-[70%] xl:w-[50%] mx-auto gradient-background2 p-4 rounded-lg">
+        <ProfileHeader
+          cover={user.cover || undefined}
+          avatar={user.avatar || undefined}
+          name={user.name || undefined}
+          surname={user.surname || undefined}
+          username={user.username}
+          postsCount={user._count.posts}
+          followersCount={user._count.followers}
+          followingsCount={user._count.followings}
+        />
+        <Feed username={user.username} />
       </div>
       <div className="hidden lg:block w-[30%] gradient-background2 rounded-lg">
         <RightMenu user={user} />

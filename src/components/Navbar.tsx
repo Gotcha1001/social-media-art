@@ -23,6 +23,7 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import SearchBar from "./SearchBar";
+import MotionWrapperDelay from "./MotionWrapperDelay";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -89,111 +90,124 @@ const Navbar = () => {
   }
 
   return (
-    <div className="h-24 flex items-center justify-between mx-3">
-      {/* LEFT: Logo */}
-      <div className="md:hidden lg:block w-[20%]">
-        <NavLink
-          page="BandSocial"
-          href="/"
-          selectedPage={selectedPage}
-          setSelectedPage={setSelectedPage}
-        />
-      </div>
-
-      {/* CENTER: Navigation Links and Search */}
-      <div className="hidden md:flex w-[50%] text-sm items-center justify-between">
-        {/* Navigation Links */}
-        <div className="flex gap-6 text-slate-400">
+    <MotionWrapperDelay
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ duration: 0.5, delay: 0.5 }}
+      variants={{
+        hidden: { opacity: 0, x: -100 },
+        visible: { opacity: 1, x: 0 },
+      }}
+    >
+      <div className="h-24 flex items-center justify-between mx-3">
+        {/* LEFT: Logo */}
+        <div className="md:hidden lg:block w-[20%]">
           <NavLink
-            page="HomePage"
+            page="BandSocial"
             href="/"
-            selectedPage={selectedPage}
-            setSelectedPage={setSelectedPage}
-          />
-          {isSignedIn && user && (
-            <NavLink
-              page="Profile"
-              href={`/profile/${user.username || ""}`}
-              selectedPage={selectedPage}
-              setSelectedPage={setSelectedPage}
-            />
-          )}
-          <NavLink
-            page="Friends"
-            href="/friends"
-            selectedPage={selectedPage}
-            setSelectedPage={setSelectedPage}
-          />
-          <NavLink
-            page="Stories"
-            href="/stories"
             selectedPage={selectedPage}
             setSelectedPage={setSelectedPage}
           />
         </div>
 
-        {/* Search Bar */}
-        <SearchBar />
-      </div>
-
-      {/* RIGHT: Login/Logout and User Options */}
-      <div className="w-[30%] flex items-center gap-4 xl:gap-8 justify-end">
-        {!isLoaded ? (
-          <div className="flex justify-center items-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-600 border-solid"></div>
-          </div>
-        ) : isSignedIn ? (
-          <div className="flex items-center gap-4 p-2">
-            {/* Icons for friends, notifications, and messages */}
+        {/* CENTER: Navigation Links and Search */}
+        <div className="hidden md:flex w-[50%] text-sm items-center justify-between">
+          {/* Navigation Links */}
+          <div className="flex gap-6 text-slate-400">
+            <NavLink
+              page="HomePage"
+              href="/"
+              selectedPage={selectedPage}
+              setSelectedPage={setSelectedPage}
+            />
+            {isSignedIn && user && (
+              <NavLink
+                page="Profile"
+                href={`/profile/${user.username || ""}`}
+                selectedPage={selectedPage}
+                setSelectedPage={setSelectedPage}
+              />
+            )}
             <NavLink
               page="Friends"
               href="/friends"
               selectedPage={selectedPage}
               setSelectedPage={setSelectedPage}
             />
-            <div
-              className={`cursor-pointer ${
-                pathname === "/notifications"
-                  ? "text-indigo-600"
-                  : "text-slate-400 hover:text-indigo-600"
-              }`}
-            >
-              <Bell className="w-6 h-6" aria-label="Notifications" />
-            </div>
-            <div
-              className={`cursor-pointer ${
-                pathname === "/messages"
-                  ? "text-indigo-600"
-                  : "text-slate-400 hover:text-indigo-600"
-              }`}
-            >
-              <MessageCircle className="w-6 h-6" aria-label="Messages" />
-            </div>
-            {/* User Button */}
-            <UserButton />
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 group">
-            <LogIn
-              className={`w-5 h-5 ${
-                pathname === "/sign-in"
-                  ? "text-indigo-900"
-                  : "text-teal-600 group-hover:text-indigo-900 transition-colors duration-200"
-              }`}
-              aria-label="Login"
-            />
             <NavLink
-              page="Sign-In"
-              href="/sign-in"
+              page="Stories"
+              href="/stories"
               selectedPage={selectedPage}
               setSelectedPage={setSelectedPage}
             />
           </div>
-        )}
 
-        <MobileMenu />
+          {/* Search Bar */}
+          <div className="ml-4 md:ml-8">
+            <SearchBar />
+          </div>
+        </div>
+
+        {/* RIGHT: Login/Logout and User Options */}
+        <div className="w-[30%] flex items-center gap-4 xl:gap-8 justify-end">
+          {!isLoaded ? (
+            <div className="flex justify-center items-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-600 border-solid"></div>
+            </div>
+          ) : isSignedIn ? (
+            <div className="flex items-center gap-4 p-2 mr-3 sm:mr-3  md:mr-8 xl:mr-8 lg:mr-8">
+              {/* Icons for friends, notifications, and messages */}
+              <NavLink
+                page="Friends"
+                href="/friends"
+                selectedPage={selectedPage}
+                setSelectedPage={setSelectedPage}
+              />
+              {/* <div
+                className={`cursor-pointer ${
+                  pathname === "/notifications"
+                    ? "text-indigo-600"
+                    : "text-slate-400 hover:text-indigo-600"
+                }`}
+              >
+                <Bell className="w-6 h-6" aria-label="Notifications" />
+              </div>
+              <div
+                className={`cursor-pointer ${
+                  pathname === "/messages"
+                    ? "text-indigo-600"
+                    : "text-slate-400 hover:text-indigo-600"
+                }`}
+              >
+                <MessageCircle className="w-6 h-6" aria-label="Messages" />
+              </div> */}
+              {/* User Button */}
+              <UserButton />
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 group">
+              <LogIn
+                className={`w-5 h-5 ${
+                  pathname === "/sign-in"
+                    ? "text-indigo-900"
+                    : "text-teal-600 group-hover:text-indigo-900 transition-colors duration-200"
+                }`}
+                aria-label="Login"
+              />
+              <NavLink
+                page="Sign-In"
+                href="/sign-in"
+                selectedPage={selectedPage}
+                setSelectedPage={setSelectedPage}
+              />
+            </div>
+          )}
+
+          <MobileMenu />
+        </div>
       </div>
-    </div>
+    </MotionWrapperDelay>
   );
 };
 

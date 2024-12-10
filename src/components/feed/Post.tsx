@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import Comments from "./Comments";
 import MotionWrapper from "../MotionWrapper";
 import { Post as PostType, User } from "@prisma/client";
