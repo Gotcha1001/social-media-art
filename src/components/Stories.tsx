@@ -33,7 +33,7 @@ const Stories = async () => {
   });
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md overflow-scroll custom-scrollbar text-sm">
+    <div className="p-6 bg-white rounded-lg shadow-md overflow-scroll scrollbar-hide custom-scrollbar  text-sm">
       <div className="flex gap-8 w-max">
         {/* STORY */}
 

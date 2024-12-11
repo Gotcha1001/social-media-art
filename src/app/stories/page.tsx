@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { fetchStories } from "@/lib/actions";
 import Image from "next/image";
+
 import { motion } from "framer-motion";
+import FeatureMotionWrapper from "@/components/FeatureMotionWrapper";
 
 // Helper function to generate a random number within a range
 const getRandomDirection = (min: number, max: number) => {
@@ -32,24 +34,7 @@ const StoriesPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {stories.length > 0 ? (
           stories.map((story, index) => (
-            <motion.div
-              key={story.id}
-              className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden flex flex-col"
-              initial={{
-                x: getRandomDirection(-200, 200), // Random horizontal movement
-                y: getRandomDirection(-200, 200), // Random vertical movement
-                opacity: 0,
-              }}
-              animate={{
-                x: 0,
-                y: 0,
-                opacity: 1,
-              }}
-              transition={{
-                duration: 0.5 + index * 0.3, // Different speed for each card
-                delay: 0.3 + index * 0.1, // Incremental delay
-              }}
-            >
+            <FeatureMotionWrapper key={story.id} index={index}>
               {/* Image section with hover and tap animation */}
               <motion.div
                 whileHover={{ scale: 1.05 }} // Scale effect on hover
@@ -64,23 +49,23 @@ const StoriesPage = () => {
                   }`}
                   width={600}
                   height={400}
-                  className="max-w-full max-h-[400px] object-contain rounded-md"
+                  className="max-w-full max-h-[400px] object-contain rounded-xl"
                 />
               </motion.div>
 
               {/* Text section */}
               <div className="p-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 text-center">
                   Posted by:{" "}
                   <span className="font-semibold">
                     {story.user.username || story.user.name || "User"}
                   </span>
                 </p>
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-gray-500 text-center">
                   Created at: {new Date(story.createdAt).toLocaleString()}
                 </p>
               </div>
-            </motion.div>
+            </FeatureMotionWrapper>
           ))
         ) : (
           <p className="col-span-full text-center text-gray-500">
