@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import { motion } from "framer-motion";
 import FeatureMotionWrapper from "@/components/FeatureMotionWrapper";
+import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 
 // Helper function to generate a random number within a range
 const getRandomDirection = (min: number, max: number) => {
@@ -30,9 +31,20 @@ const StoriesPage = () => {
 
   return (
     <div className="mx-auto px-4 py-8 gradient-background2">
-      <h1 className="text-5xl md:text-7xl lg:text-8xl text-center font-bold mb-4 gradient-title">
-        Stories
-      </h1>
+      <MotionWrapperDelay
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 2, delay: 0.9 }}
+        variants={{
+          hidden: { opacity: 0, x: 100 },
+          visible: { opacity: 1, x: 0 },
+        }}
+      >
+        <h1 className="text-5xl md:text-7xl lg:text-8xl text-center font-bold mb-4 gradient-title zoom">
+          Stories
+        </h1>
+      </MotionWrapperDelay>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {stories.length > 0 ? (
           stories.map((story, index) => (

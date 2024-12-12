@@ -55,20 +55,32 @@ const FriendsPage = () => {
   }
 
   return (
-    <MotionWrapperDelay
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ duration: 0.5, delay: 0.7 }}
-      variants={{
-        hidden: { opacity: 0, x: 100 },
-        visible: { opacity: 1, x: 0 },
-      }}
-    >
-      <div className="p-6 gradient-background2">
+    <div className="p-6 gradient-background2">
+      <MotionWrapperDelay
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 2, delay: 0.9 }}
+        variants={{
+          hidden: { opacity: 0, x: 100 },
+          visible: { opacity: 1, x: 0 },
+        }}
+      >
         <h1 className="text-5xl md:text-7xl lg:text-8xl text-center font-bold mb-4 gradient-title">
           My Friends
         </h1>
+      </MotionWrapperDelay>
+
+      <MotionWrapperDelay
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+        variants={{
+          hidden: { opacity: 0, y: 100 },
+          visible: { opacity: 1, y: 0 },
+        }}
+      >
         {friends.length > 0 ? (
           <div className="flex flex-col gap-4">
             {friends.map((friend) => (
@@ -105,8 +117,8 @@ const FriendsPage = () => {
         ) : (
           <p className="text-gray-500">You have no friends yet.</p>
         )}
-      </div>
-    </MotionWrapperDelay>
+      </MotionWrapperDelay>
+    </div>
   );
 };
 

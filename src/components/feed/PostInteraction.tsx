@@ -23,6 +23,7 @@ const PostInteraction = ({
     isLiked: userId ? initialLikes.includes(userId) : false,
   });
 
+  // Directly use initialLikes and commentNumber as fallback
   const [commentCount, setCommentCount] = useState(commentNumber);
 
   // Memoized function to fetch likes
@@ -38,20 +39,38 @@ const PostInteraction = ({
     }
   }, [postId, userId]);
 
-  // Memoized function to fetch comment count
+  // Memoized function to fetch comment count with fallback
   const fetchCommentCount = useCallback(async () => {
     try {
       const count = await getCommentCount(String(postId));
-      setCommentCount(count);
+      // Only update if count is not 0 or undefined
+      if (count && count > 0) {
+        setCommentCount(count);
+      } else {
+        // Fallback to initial comment number if count is 0 or undefined
+        setCommentCount(commentNumber);
+      }
     } catch (error) {
+      // Fallback to initial comment number on error
+      setCommentCount(commentNumber);
       console.error("Error fetching comment count:", error);
     }
-  }, [postId]);
+  }, [postId, commentNumber]);
 
-  // Call functions to refresh data on component mount
+  // Call functions to refresh data on component mount and periodically
   useEffect(() => {
+    // Immediate fetch on mount
     fetchLikes();
     fetchCommentCount();
+
+    // Periodic refresh every 30 seconds
+    const intervalId = setInterval(() => {
+      fetchLikes();
+      fetchCommentCount();
+    }, 30000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
   }, [fetchLikes, fetchCommentCount]);
 
   // Optimistic UI for likes
