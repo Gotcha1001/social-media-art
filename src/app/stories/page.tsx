@@ -30,7 +30,9 @@ const StoriesPage = () => {
 
   return (
     <div className="mx-auto px-4 py-8 gradient-background2">
-      <h1 className="text-3xl font-bold text-center mb-6">Stories</h1>
+      <h1 className="text-5xl md:text-7xl lg:text-8xl text-center font-bold mb-4 gradient-title">
+        Stories
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {stories.length > 0 ? (
           stories.map((story, index) => (

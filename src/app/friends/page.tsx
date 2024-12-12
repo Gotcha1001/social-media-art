@@ -66,7 +66,9 @@ const FriendsPage = () => {
       }}
     >
       <div className="p-6 gradient-background2">
-        <h1 className="text-2xl font-bold mb-4">My Friends</h1>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl text-center font-bold mb-4 gradient-title">
+          My Friends
+        </h1>
         {friends.length > 0 ? (
           <div className="flex flex-col gap-4">
             {friends.map((friend) => (

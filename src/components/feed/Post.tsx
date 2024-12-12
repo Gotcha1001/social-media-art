@@ -64,7 +64,7 @@ const Post = async ({ post }: { post: FeedPostType }) => {
         />
       </Suspense>
       <Suspense fallback="Loading...">
-        <Comments postId={Number(post.id)} />
+        <Comments postId={post.id} />
       </Suspense>
     </div>
   );

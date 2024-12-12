@@ -15,7 +15,7 @@ const CommentList = ({
   postId,
 }: {
   comments: CommentWithUser[];
-  postId: number;
+  postId: string;
 }) => {
   const { user } = useUser();
   const [commentState, setCommentState] = useState(comments);
@@ -24,13 +24,14 @@ const CommentList = ({
   const add = async () => {
     if (!user || !desc) return;
 
+    // Use the actual postId instead of a random one
     addOptimisticComment({
-      id: Math.random().toString(),
+      id: postId, // Ensure this matches the postId you're passing
       desc,
       createdAt: new Date(Date.now()),
       updatedAt: new Date(Date.now()),
       userId: user.id,
-      postId: postId.toString(),
+      postId: postId, // Pass the actual postId here
       user: {
         id: user.id,
         username: "Sending Please Wait...",
@@ -46,11 +47,15 @@ const CommentList = ({
         createdAt: new Date(Date.now()),
       },
     });
-    try {
-      const createdComment = await addComment(postId.toString(), desc);
 
+    try {
+      const createdComment = await addComment(postId, desc);
+
+      // Update state with the correctly created comment
       setCommentState((prev) => [createdComment, ...prev]);
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const [optimisticComments, addOptimisticComment] = useOptimistic(
