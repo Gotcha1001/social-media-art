@@ -63,7 +63,7 @@ const StoriesPage = () => {
                   }`}
                   width={600}
                   height={400}
-                  className="max-w-full max-h-[400px] object-contain rounded-xl"
+                  className="max-w-full max-h-[400px] object-cover rounded-xl"
                 />
               </motion.div>
 
