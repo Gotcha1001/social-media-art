@@ -82,13 +82,13 @@ const MobileMenu = () => {
             setSelectedPage={setSelectedPage}
             onClose={closeMenu} // Pass closeMenu here
           />
-          <NavLink
+          {/* <NavLink
             page="Groups"
             href="/groups"
             selectedPage={selectedPage}
             setSelectedPage={setSelectedPage}
-            onClose={closeMenu} // Pass closeMenu here
-          />
+            onClose={closeMenu} 
+          /> */}
           <NavLink
             page="Stories"
             href="/stories"

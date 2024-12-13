@@ -83,7 +83,7 @@ const StoriesPage = () => {
           ))
         ) : (
           <p className="col-span-full text-center text-gray-500">
-            No stories available.
+            No stories available, or fetching...
           </p>
         )}
       </div>

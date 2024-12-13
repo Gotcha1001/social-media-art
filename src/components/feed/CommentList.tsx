@@ -2,13 +2,16 @@
 
 import Image from "next/image";
 import MotionWrapper from "../MotionWrapper";
-
 import { useUser } from "@clerk/nextjs";
-import { useOptimistic, useState } from "react";
+import { useOptimistic, useState, useEffect } from "react";
 import { addComment } from "@/lib/actions";
+import { switchCommentLike, getCommentLikes } from "@/lib/actions"; // Add this import
 import { Comment, User } from "@prisma/client";
 
-type CommentWithUser = Comment & { user: User };
+type CommentWithUser = Comment & {
+  user: User;
+  _count?: { likes: number }; // Add likes count
+};
 
 const CommentList = ({
   comments,
@@ -20,18 +23,60 @@ const CommentList = ({
   const { user } = useUser();
   const [commentState, setCommentState] = useState(comments);
   const [desc, setDesc] = useState("");
+  const [likeStates, setLikeStates] = useState<{
+    [commentId: string]: {
+      likeCount: number;
+      isLiked: boolean;
+    };
+  }>({});
+
+  // Fetch likes for all comments on component mount
+  useEffect(() => {
+    const fetchCommentLikes = async () => {
+      const likesStates: {
+        [commentId: string]: {
+          likeCount: number;
+          isLiked: boolean;
+        };
+      } = {};
+
+      for (const comment of commentState) {
+        try {
+          const likes = await getCommentLikes(comment.id);
+          likesStates[comment.id] = {
+            likeCount: likes.length,
+            isLiked: user ? likes.includes(user.id) : false,
+          };
+        } catch (error) {
+          console.error(
+            `Error fetching likes for comment ${comment.id}:`,
+            error
+          );
+          likesStates[comment.id] = {
+            likeCount: comment._count?.likes || 0,
+            isLiked: false,
+          };
+        }
+      }
+
+      setLikeStates(likesStates);
+    };
+
+    if (commentState.length > 0) {
+      fetchCommentLikes();
+    }
+  }, [commentState, user]);
 
   const add = async () => {
     if (!user || !desc) return;
 
-    // Use the actual postId instead of a random one
     addOptimisticComment({
-      id: postId, // Ensure this matches the postId you're passing
+      id: postId,
       desc,
       createdAt: new Date(Date.now()),
       updatedAt: new Date(Date.now()),
       userId: user.id,
-      postId: postId, // Pass the actual postId here
+      postId: postId,
       user: {
         id: user.id,
         username: "Sending Please Wait...",
@@ -50,11 +95,47 @@ const CommentList = ({
 
     try {
       const createdComment = await addComment(postId, desc);
-
-      // Update state with the correctly created comment
       setCommentState((prev) => [createdComment, ...prev]);
+      setDesc(""); // Clear input after successful comment
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  // Handle comment like action
+  const handleCommentLike = async (commentId: string) => {
+    // Optimistically update the like state
+    setLikeStates((prev) => ({
+      ...prev,
+      [commentId]: {
+        likeCount: prev[commentId]?.isLiked
+          ? prev[commentId].likeCount - 1
+          : prev[commentId].likeCount + 1,
+        isLiked: !prev[commentId]?.isLiked,
+      },
+    }));
+
+    try {
+      await switchCommentLike(commentId);
+      // Refetch likes to ensure consistency
+      const likes = await getCommentLikes(commentId);
+      setLikeStates((prev) => ({
+        ...prev,
+        [commentId]: {
+          likeCount: likes.length,
+          isLiked: user ? likes.includes(user.id) : false,
+        },
+      }));
+    } catch (error) {
+      console.error("Error toggling comment like:", error);
+      // Revert optimistic update on error
+      setLikeStates((prev) => ({
+        ...prev,
+        [commentId]: {
+          likeCount: prev[commentId]?.likeCount || 0,
+          isLiked: prev[commentId]?.isLiked || false,
+        },
+      }));
     }
   };
 
@@ -101,7 +182,7 @@ const CommentList = ({
       )}
 
       {/* Comments Section */}
-      {commentState.map((comment) => (
+      {optimisticComments.map((comment) => (
         <div className="mt-6" key={comment.id}>
           {/* Single Comment */}
           <div className="flex gap-4 justify-between">
@@ -127,10 +208,24 @@ const CommentList = ({
               <div className="flex items-center gap-8 text-xs text-gray-500 mt-2">
                 <div className="flex items-center gap-4">
                   <MotionWrapper>
-                    <Image src="/like.png" alt="Icon" height={12} width={12} />
+                    <button onClick={() => handleCommentLike(comment.id)}>
+                      <Image
+                        src={
+                          likeStates[comment.id]?.isLiked
+                            ? "/liked.png"
+                            : "/like.png"
+                        }
+                        alt="Like Icon"
+                        height={12}
+                        width={12}
+                        className="cursor-pointer"
+                      />
+                    </button>
                   </MotionWrapper>
                   <span className="text-gray-300">|</span>
-                  <span className="text-gray-500">0 Likes</span>
+                  <span className="text-gray-500">
+                    {likeStates[comment.id]?.likeCount || 0} Likes
+                  </span>
                 </div>
                 <div>Reply</div>
               </div>

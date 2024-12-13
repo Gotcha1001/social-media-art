@@ -224,52 +224,6 @@ export const updateProfile = async (payload: {
   }
 };
 
-export const switchLike = async (postId: string) => {
-  const { userId } = await auth();
-
-  if (!userId) throw new Error("User is not Authenticated");
-
-  try {
-    const existingLike = await prisma.like.findFirst({
-      where: {
-        postId: postId,
-        userId,
-      },
-    });
-    console.log("Existing Like:", existingLike); // Debugging
-    if (existingLike) {
-      await prisma.like.delete({
-        where: {
-          id: existingLike.id,
-        },
-      });
-      console.log("Like removed");
-    } else {
-      await prisma.like.create({
-        data: {
-          postId: postId,
-          userId,
-        },
-      });
-      console.log("Like added");
-    }
-  } catch (error) {
-    console.error("Error in switchLike:", error);
-    throw new Error("Something went wrong");
-  }
-};
-
-export const getPostLikes = async (postId: string) => {
-  try {
-    const likes = await prisma.like.findMany({
-      where: { postId: postId },
-    });
-    return likes.map((like) => like.userId);
-  } catch (error) {
-    throw new Error("Failed to fetch likes");
-  }
-};
-
 export const addComment = async (postId: string, desc: string) => {
   const { userId } = await auth();
 
@@ -480,3 +434,125 @@ export const fetchStories = async () => {
     throw new Error("Failed to fetch stories");
   }
 };
+
+// Toggle like for a comment
+export const switchCommentLike = async (commentId: string) => {
+  const { userId } = await auth();
+
+  if (!userId) throw new Error("User is not Authenticated");
+
+  try {
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        commentId: commentId,
+        userId,
+      },
+    });
+
+    if (existingLike) {
+      // Remove existing like
+      await prisma.like.delete({
+        where: {
+          id: existingLike.id,
+        },
+      });
+      console.log("Comment like removed");
+    } else {
+      // Add new like
+      await prisma.like.create({
+        data: {
+          commentId: commentId,
+          userId,
+        },
+      });
+      console.log("Comment like added");
+    }
+  } catch (error) {
+    console.error("Error in switchCommentLike:", error);
+    throw new Error("Something went wrong while toggling comment like");
+  }
+};
+
+// Fetch likes for a specific comment
+export const getCommentLikes = async (commentId: string) => {
+  try {
+    const likes = await prisma.like.findMany({
+      where: { commentId: commentId },
+    });
+    return likes.map((like) => like.userId);
+  } catch (error) {
+    console.error("Error fetching comment likes:", error);
+    throw new Error("Failed to fetch comment likes");
+  }
+};
+
+export const switchLike = async (postId: string) => {
+  const { userId } = await auth();
+
+  if (!userId) throw new Error("User is not Authenticated");
+
+  try {
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        postId: postId,
+        userId,
+      },
+    });
+    console.log("Existing Like:", existingLike); // Debugging
+    if (existingLike) {
+      await prisma.like.delete({
+        where: {
+          id: existingLike.id,
+        },
+      });
+      console.log("Like removed");
+    } else {
+      await prisma.like.create({
+        data: {
+          postId: postId,
+          userId,
+        },
+      });
+      console.log("Like added");
+    }
+  } catch (error) {
+    console.error("Error in switchLike:", error);
+    throw new Error("Something went wrong");
+  }
+};
+
+export const getPostLikes = async (postId: string) => {
+  try {
+    const likes = await prisma.like.findMany({
+      where: { postId: postId },
+    });
+    return likes.map((like) => like.userId);
+  } catch (error) {
+    throw new Error("Failed to fetch likes");
+  }
+};
+// export const getAllCommentLikes = async (postId: string) => {
+//   try {
+//     const likes = await prisma.like.findMany({
+//       where: { comment: { postId } },
+//       select: {
+//         commentId: true,
+//         userId: true,
+//       },
+//     });
+
+//     const groupedLikes = likes.reduce((acc, like) => {
+//       const commentKey = like.commentId ?? "null"; // Use "null" as a placeholder key
+//       if (!acc[commentKey]) {
+//         acc[commentKey] = [];
+//       }
+//       acc[commentKey].push(like.userId);
+//       return acc;
+//     }, {} as Record<string, string[]>);
+
+//     return groupedLikes;
+//   } catch (error) {
+//     console.error("Error fetching all comment likes:", error);
+//     throw new Error("Failed to fetch all comment likes");
+//   }
+// };
