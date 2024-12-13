@@ -60,7 +60,7 @@ const Post = async ({ post }: { post: FeedPostType }) => {
         <PostInteraction
           commentNumber={post._count.comments}
           initialLikes={post.likes.map((like) => like.userId)} // Changed from likes to initialLikes
-          postId={Number(post.id)}
+          postId={post.id}
         />
       </Suspense>
       <Suspense fallback="Loading...">

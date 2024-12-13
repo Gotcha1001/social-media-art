@@ -232,7 +232,7 @@ export const switchLike = async (postId: string) => {
   try {
     const existingLike = await prisma.like.findFirst({
       where: {
-        postId,
+        postId: postId,
         userId,
       },
     });
@@ -247,7 +247,7 @@ export const switchLike = async (postId: string) => {
     } else {
       await prisma.like.create({
         data: {
-          postId,
+          postId: postId,
           userId,
         },
       });
@@ -261,7 +261,9 @@ export const switchLike = async (postId: string) => {
 
 export const getPostLikes = async (postId: string) => {
   try {
-    const likes = await prisma.like.findMany({ where: { postId } });
+    const likes = await prisma.like.findMany({
+      where: { postId: postId },
+    });
     return likes.map((like) => like.userId);
   } catch (error) {
     throw new Error("Failed to fetch likes");

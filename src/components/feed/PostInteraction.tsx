@@ -12,7 +12,7 @@ const PostInteraction = ({
   initialLikes,
   commentNumber,
 }: {
-  postId: number;
+  postId: string;
   initialLikes: string[];
   commentNumber: number;
 }) => {
