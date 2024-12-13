@@ -4,4 +4,5 @@ export type SelectedPage =
   | "profile"
   | "friends"
   | "stories"
+  | "findfriends"
   | "sign-in";

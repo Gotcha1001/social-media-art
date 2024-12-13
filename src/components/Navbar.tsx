@@ -141,6 +141,12 @@ const Navbar = () => {
               selectedPage={selectedPage}
               setSelectedPage={setSelectedPage}
             />
+            <NavLink
+              page="Find"
+              href="/findfriends"
+              selectedPage={selectedPage}
+              setSelectedPage={setSelectedPage}
+            />
           </div>
 
           {/* Search Bar */}

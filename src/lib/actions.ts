@@ -556,3 +556,166 @@ export const getPostLikes = async (postId: string) => {
 //     throw new Error("Failed to fetch all comment likes");
 //   }
 // };
+
+export const addReply = async (commentId: string, desc: string) => {
+  const { userId } = await auth();
+
+  if (!userId) throw new Error("User is not Authenticated");
+
+  try {
+    const createdReply = await prisma.reply.create({
+      data: {
+        desc,
+        userId,
+        commentId,
+      },
+      include: {
+        user: true,
+      },
+    });
+    return createdReply;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Something went wrong while adding reply!");
+  }
+};
+
+export const getCommentReplies = async (commentId: string) => {
+  try {
+    const replies = await prisma.reply.findMany({
+      where: { commentId },
+      include: {
+        user: true,
+        likes: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return replies;
+  } catch (error) {
+    console.error("Failed to fetch replies:", error);
+    throw new Error("Failed to fetch replies");
+  }
+};
+
+export const switchReplyLike = async (replyId: string) => {
+  const { userId } = await auth();
+
+  if (!userId) throw new Error("User is not Authenticated");
+
+  try {
+    // Check if like already exists
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        userId,
+        replyId,
+      },
+    });
+
+    if (existingLike) {
+      // If like exists, delete it
+      await prisma.like.delete({
+        where: { id: existingLike.id },
+      });
+    } else {
+      // If like doesn't exist, create it
+      await prisma.like.create({
+        data: {
+          userId,
+          replyId,
+        },
+      });
+    }
+
+    // Return the updated likes for the reply
+    const likes = await prisma.like.findMany({
+      where: { replyId },
+      select: { userId: true },
+    });
+
+    return likes.map((like) => like.userId);
+  } catch (error) {
+    console.error("Error toggling reply like:", error);
+    throw new Error("Failed to toggle reply like");
+  }
+};
+
+export const getReplyLikes = async (replyId: string) => {
+  try {
+    const likes = await prisma.like.findMany({
+      where: { replyId },
+      select: { userId: true },
+    });
+    return likes.map((like) => like.userId);
+  } catch (error) {
+    console.error("Failed to fetch reply likes:", error);
+    throw new Error("Failed to fetch reply likes");
+  }
+};
+
+export const getSuggestedFriends = async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User is not authenticated");
+  }
+
+  try {
+    // Fetch up to 20 friends that the user is not yet following
+    const friends = await prisma.user.findMany({
+      take: 20,
+      where: {
+        NOT: {
+          followers: {
+            some: {
+              followerId: userId,
+            },
+          },
+        },
+      },
+    });
+
+    return friends;
+  } catch (error) {
+    console.error("Failed to fetch friend suggestions:", error);
+    throw new Error("Failed to fetch friend suggestions");
+  }
+};
+
+export async function addFriend(friendId: string, userId: string) {
+  // First, check if both users are already following each other
+  const existingFriendship = await prisma.follower.findFirst({
+    where: {
+      followerId: userId,
+      followingId: friendId,
+    },
+  });
+
+  // If users are already following each other, consider them friends
+  if (existingFriendship) {
+    // Return a message if they are already friends
+    return {
+      error: "You are already friends with this user.",
+    };
+  }
+
+  // Create the friendship by adding a new following relationship in both directions
+  await prisma.follower.create({
+    data: {
+      followerId: userId,
+      followingId: friendId,
+    },
+  });
+
+  await prisma.follower.create({
+    data: {
+      followerId: friendId,
+      followingId: userId,
+    },
+  });
+
+  return {
+    success: "Friend added successfully.",
+  };
+}

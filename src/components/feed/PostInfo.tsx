@@ -29,12 +29,12 @@ const PostInfo = ({ postId }: { postId: string }) => {
       />
       {open && (
         <div className="absolute top-4 right-0 bg-white w-32 p-4 rounded-lg flex flex-col gap-2 text-xs shadow-lg z-30">
-          <button className="text-left cursor-pointer hover:text-gray-600">
+          {/* <button className="text-left cursor-pointer hover:text-gray-600">
             View
           </button>
           <button className="text-left cursor-pointer hover:text-gray-600">
             Re-post
-          </button>
+          </button> */}
           <button
             type="button"
             className="text-left text-red-600 hover:text-red-800 cursor-pointer"

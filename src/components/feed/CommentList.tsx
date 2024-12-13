@@ -164,18 +164,17 @@ const CommentList = ({
             <input
               type="text"
               placeholder="Write a comment..."
-              className="bg-transparent outline-none flex-1"
+              className="bg-transparent outline-none flex-1 border border-1 hover:border-indigo-400 p-2 rounded-lg"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
             />
             <MotionWrapper>
-              <Image
-                src="/emoji.png"
-                alt="emoji"
-                width={16}
-                height={16}
-                className="cursor-pointer"
-              />
+              <button
+                type="submit" // Make the button trigger the form submit
+                className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 ml-2"
+              >
+                Add Comment
+              </button>
             </MotionWrapper>
           </form>
         </div>
@@ -227,7 +226,6 @@ const CommentList = ({
                     {likeStates[comment.id]?.likeCount || 0} Likes
                   </span>
                 </div>
-                <div>Reply</div>
               </div>
             </div>
 
