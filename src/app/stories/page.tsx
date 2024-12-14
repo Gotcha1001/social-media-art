@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const StoriesPage = () => {
   const [stories, setStories] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const storiesPerPage = 10;
+  const storiesPerPage = 12;
   const storiesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
