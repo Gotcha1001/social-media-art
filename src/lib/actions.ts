@@ -394,18 +394,33 @@ export const getFriends = async () => {
   }
 
   try {
-    // Fetch friends where the logged-in user is the follower and the followed user is not blocked
+    // Fetch friends where the logged-in user is either the follower or being followed
     const friends = await prisma.follower.findMany({
       where: {
-        followerId: userId,
+        OR: [
+          { followerId: userId }, // Logged-in user follows others
+          { followingId: userId }, // Others follow the logged-in user
+        ],
       },
       include: {
-        following: true, // Include the details of the followed user
+        follower: true, // Include the follower details
+        following: true, // Include the following details
       },
     });
 
-    // Only return the following user details
-    return friends.map((f) => f.following);
+    // Create a unique set of friend IDs
+    const uniqueFriends = new Map();
+
+    friends.forEach((relation) => {
+      if (relation.followerId === userId) {
+        uniqueFriends.set(relation.following.id, relation.following);
+      } else if (relation.followingId === userId) {
+        uniqueFriends.set(relation.follower.id, relation.follower);
+      }
+    });
+
+    // Return the unique list of friends
+    return Array.from(uniqueFriends.values());
   } catch (error) {
     console.error("Failed to fetch friends:", error);
     throw new Error("Failed to fetch friends");
@@ -621,4 +636,38 @@ export async function addFriend(friendId: string, userId: string) {
   return {
     success: "Friend added successfully.",
   };
+}
+
+export async function sendFollowRequest(senderId: string, receiverId: string) {
+  // Check if a follow request already exists
+  const existingRequest = await prisma.followRequest.findUnique({
+    where: {
+      senderId_receiverId: { senderId, receiverId },
+    },
+  });
+
+  if (existingRequest) {
+    return { error: "Follow request already sent." };
+  }
+
+  // Check if they are already friends
+  const existingFriendship = await prisma.follower.findUnique({
+    where: {
+      followerId_followingId: { followerId: senderId, followingId: receiverId },
+    },
+  });
+
+  if (existingFriendship) {
+    return { error: "You are already friends with this user." };
+  }
+
+  // Create a follow request
+  await prisma.followRequest.create({
+    data: {
+      senderId,
+      receiverId,
+    },
+  });
+
+  return { success: "Follow request sent successfully." };
 }

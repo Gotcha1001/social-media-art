@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { getSuggestedFriends, addFriend } from "@/lib/actions";
+import {
+  getSuggestedFriends,
+  addFriend,
+  sendFollowRequest,
+} from "@/lib/actions";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay"; // Optional animation component
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -35,7 +39,7 @@ const FindFriends = () => {
   }, [isSignedIn, user]);
 
   // Handle adding a friend
-  const handleAddFriend = async (friendId: string) => {
+  const handleSendFollowRequest = async (friendId: string) => {
     setError(null);
 
     if (!user || !user.id) {
@@ -44,7 +48,7 @@ const FindFriends = () => {
     }
 
     try {
-      const response = await addFriend(friendId, user.id);
+      const response = await sendFollowRequest(user.id, friendId);
 
       if (response.error) {
         setError(response.error);
@@ -52,11 +56,11 @@ const FindFriends = () => {
         setFriends((prevFriends) =>
           prevFriends.filter((friend) => friend.id !== friendId)
         );
-        toast.success("Friend added successfully!");
+        toast.success("Follow request sent!");
       }
     } catch (error) {
-      setError("Failed to add friend. Please try again.");
-      console.error("Error adding friend:", error);
+      setError("Failed to send follow request. Please try again.");
+      console.error("Error sending follow request:", error);
     }
   };
 
@@ -128,10 +132,10 @@ const FindFriends = () => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => handleAddFriend(friend.id)}
+                      onClick={() => handleSendFollowRequest(friend.id)}
                       className="ml-4 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
                     >
-                      Add Friend
+                      Send Follow Request
                     </button>
                   )}
                 </motion.li>
