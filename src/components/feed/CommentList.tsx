@@ -104,19 +104,26 @@ const CommentList = ({
 
   // Handle comment like action
   const handleCommentLike = async (commentId: string) => {
+    // Safely handle the case where likeStates might not exist for this comment
+    const currentLikeState = likeStates[commentId] || {
+      likeCount: 0,
+      isLiked: false,
+    };
+
     // Optimistically update the like state
     setLikeStates((prev) => ({
       ...prev,
       [commentId]: {
-        likeCount: prev[commentId]?.isLiked
-          ? prev[commentId].likeCount - 1
-          : prev[commentId].likeCount + 1,
-        isLiked: !prev[commentId]?.isLiked,
+        likeCount: currentLikeState.isLiked
+          ? currentLikeState.likeCount - 1
+          : currentLikeState.likeCount + 1,
+        isLiked: !currentLikeState.isLiked,
       },
     }));
 
     try {
       await switchCommentLike(commentId);
+
       // Refetch likes to ensure consistency
       const likes = await getCommentLikes(commentId);
       setLikeStates((prev) => ({
@@ -128,13 +135,19 @@ const CommentList = ({
       }));
     } catch (error) {
       console.error("Error toggling comment like:", error);
+
+      // More detailed error logging
+      if (error instanceof Error) {
+        console.error("Error details:", {
+          message: error.message,
+          stack: error.stack,
+        });
+      }
+
       // Revert optimistic update on error
       setLikeStates((prev) => ({
         ...prev,
-        [commentId]: {
-          likeCount: prev[commentId]?.likeCount || 0,
-          isLiked: prev[commentId]?.isLiked || false,
-        },
+        [commentId]: currentLikeState,
       }));
     }
   };
