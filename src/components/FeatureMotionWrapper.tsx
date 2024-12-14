@@ -77,8 +77,9 @@ export default function FeatureMotionWrapper({
             }
       }
       transition={{
-        duration: 0.5 + index * 0.3,
-        delay: 0.3 + index * 0.1,
+        duration: 0.3 + index * 0.1,
+        delay: 0.1 + index * 0.05,
+        ease: "linear", // or "easeOut" for a slightly smoother feel
       }}
     >
       {children}
