@@ -671,3 +671,28 @@ export async function sendFollowRequest(senderId: string, receiverId: string) {
 
   return { success: "Follow request sent successfully." };
 }
+
+export const deleteFriend = async (friendId: string) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User is not authenticated");
+  }
+
+  try {
+    // Delete the friend relation where the current user is either follower or following
+    await prisma.follower.deleteMany({
+      where: {
+        OR: [
+          { followerId: userId, followingId: friendId },
+          { followerId: friendId, followingId: userId },
+        ],
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete friend:", error);
+    throw new Error("Failed to delete friend");
+  }
+};

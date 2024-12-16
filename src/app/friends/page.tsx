@@ -1,26 +1,26 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link"; // Import Link for navigation
-import Image from "next/image"; // Import Image for optimized image rendering
-import { getFriends } from "@/lib/actions";
+import Link from "next/link";
+import Image from "next/image";
+import { getFriends, deleteFriend } from "@/lib/actions"; // Import the delete action
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
-import FeatureMotionWrapper from "@/components/FeatureMotionWrapper"; // Import the FeatureMotionWrapper component
+import FeatureMotionWrapper from "@/components/FeatureMotionWrapper";
 import { useAuth } from "@clerk/nextjs";
+import { toast } from "react-hot-toast"; // Import toast
 
 interface User {
   id: string;
   username: string;
-  name?: string | null; // Allow null as the response type is string | null
-  surname?: string | null; // Allow null
-  avatar?: string | null; // Allow null
+  name?: string | null;
+  surname?: string | null;
+  avatar?: string | null;
 }
 
 const FriendsPage = () => {
   const [friends, setFriends] = useState<User[]>([]);
-  const { isSignedIn, isLoaded } = useAuth(); // Clerk's auth state
+  const { isSignedIn, isLoaded } = useAuth();
 
   useEffect(() => {
-    // Fetch friends only if the user is authenticated
     const fetchFriends = async () => {
       try {
         if (isSignedIn) {
@@ -35,13 +35,26 @@ const FriendsPage = () => {
     fetchFriends();
   }, [isSignedIn]);
 
+  const handleDeleteFriend = async (friendId: string) => {
+    try {
+      await deleteFriend(friendId); // Call the server action
+      setFriends((prev) => prev.filter((friend) => friend.id !== friendId)); // Update the local state
+
+      // Show a success toast
+      toast.success("Friend removed successfully!");
+    } catch (error) {
+      console.error("Failed to delete friend:", error);
+
+      // Show an error toast
+      toast.error("Failed to remove friend.");
+    }
+  };
+
   if (!isLoaded) {
-    // Wait for the auth state to load
     return <div>Loading...</div>;
   }
 
   if (!isSignedIn) {
-    // Display a message if not authenticated
     return (
       <div className="p-6 gradient-background2 flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-2xl font-bold mb-4">Sign In Required</h1>
@@ -86,40 +99,42 @@ const FriendsPage = () => {
           <div className="flex flex-col gap-4">
             {friends.map((friend, index) => (
               <FeatureMotionWrapper key={friend.id} index={index}>
-                <Link
-                  href={`/profile/${friend.username}`} // Navigate to the friend's profile page
-                  className="flex items-center p-4 border rounded-lg shadow-lg bg-white hover:bg-gray-500 transition"
-                >
+                <div className="flex items-center p-4 border rounded-lg shadow-lg bg-white hover:bg-gray-500 transition relative">
                   {friend.avatar ? (
                     <Image
                       src={friend.avatar}
                       alt={friend.username}
-                      className="w-12 h-12 rounded-full mr-4 object-cover"
-                      width={48} // Set width as per the desired size
-                      height={48} // Set height as per the desired size
-                      loading="lazy" // Ensures images are lazy-loaded for better performance
+                      width={50}
+                      height={50}
+                      className="rounded-full mr-4"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-300 mr-4 flex items-center justify-center">
-                      <span className="text-gray-600">No Image</span>
-                    </div>
+                    <div className="w-12 h-12 rounded-full bg-gray-300 mr-4" />
                   )}
-                  <div className="flex flex-col">
-                    <h2 className="text-lg font-semibold">{friend.username}</h2>
-                    {friend.name && friend.surname && (
-                      <p className="text-sm text-gray-600">
-                        {friend.name} {friend.surname}
+                  <Link
+                    href={`/profile/${friend.username}`}
+                    className="flex-grow"
+                  >
+                    <div>
+                      <p className="font-bold text-lg">
+                        {friend.name || "Unknown"}
                       </p>
-                    )}
-                  </div>
-                </Link>
+                      <p className="text-gray-500">@{friend.username}</p>
+                    </div>
+                  </Link>
+                  <button
+                    onClick={() => handleDeleteFriend(friend.id)}
+                    className="absolute top-2 right-2 p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-700 transition"
+                    aria-label={`Unfollow ${friend.username}`}
+                  >
+                    Unfollow
+                  </button>
+                </div>
               </FeatureMotionWrapper>
             ))}
           </div>
         ) : (
-          <p className="text-gray-500">
-            You have no friends yet, or fetching...wait
-          </p>
+          <p>No friends found.</p>
         )}
       </MotionWrapperDelay>
     </div>
